@@ -56,8 +56,22 @@ class BigramLanguageModel(nn.Module):
     def forward(self, idx, targets):
         # idx and targets are both (B, T) tensors of integers
         logits = self.token_embedding_table(idx) # (B, T, C)
+        B, T, C = logits.shape
+        logits = logits.view(B*T, C)
+        targets = targets.view(B*T)
 
-        return logits
+        loss = F.cross_entropy(logits, targets) # Loss function
+        return logits, loss
+
+    def generate(self, idx, max_new_tokens):
+        #idx is (B, T) array of indices in the current context
+        for _ in range(max_new_tokens):
+            logits, loss = self(idx)
+            logits = logits[:, -1, :]
+            probs = F.softmax(logist, dim=1)
+            idx_next = torch.multinomial(probs, num_samples=1)
+            idx = torch.cat((idx, idx_next), dim=1)
+
 
 m = BigramLanguageModel(vocab_size)
-out = m(xb, yb)
+logits, loss = m(xb, yb)
