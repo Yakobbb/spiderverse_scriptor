@@ -14,5 +14,11 @@ decode = lambda l: ''.join(itos[i] for i in l)
 '''
 GPT uses something called tiktoken, with roughly 50,000 sub-word level tokens
 '''
-x = torch.rand(5, 3)
-print(x)
+
+# Split data into training + testing set
+data = torch.tensor(encode(text), dtype=torch.long)
+n = int(.9 * len(data))
+train_data = data[:n]
+val_data = data[n:]
+
+block_size = 8 # Length of chunks that will be plugged into transformer
