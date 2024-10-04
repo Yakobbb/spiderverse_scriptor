@@ -61,4 +61,3 @@ class BigramLanguageModel(nn.Module):
 
 m = BigramLanguageModel(vocab_size)
 out = m(xb, yb)
-print(out)
